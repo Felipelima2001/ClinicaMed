@@ -9,20 +9,27 @@ namespace AgendaConsultas.Controllers
     public class PacienteController : ControllerBase
     {
         private readonly IPacienteRepository _repository;
+        private readonly IConsultaRepository _consultaRepository;
 
-        public PacienteController(IPacienteRepository repository)
+        public PacienteController(
+            IPacienteRepository repository,
+            IConsultaRepository consultaRepository)
         {
             _repository = repository;
+            _consultaRepository = consultaRepository;
         }
 
-        // 🔍 LISTAR TODOS
+        // LISTAR TODOS
         [HttpGet]
         public IActionResult Get()
         {
-            return Ok(_repository.GetAll());
+            var pacientes = _repository.GetAll();
+
+            //  retornar lista vazia se não tiver
+            return Ok(pacientes ?? new List<Paciente>());
         }
 
-        // 🔍 BUSCAR POR ID
+        // BUSCAR POR ID
         [HttpGet("{id}")]
         public IActionResult GetById(int id)
         {
@@ -34,19 +41,25 @@ namespace AgendaConsultas.Controllers
             return Ok(paciente);
         }
 
-        // ➕ CRIAR PACIENTE
+        // CRIAR PACIENTE
         [HttpPost]
         public IActionResult Post(Paciente paciente)
         {
             if (string.IsNullOrWhiteSpace(paciente.Nome))
                 return BadRequest("Nome é obrigatório");
 
+            if (paciente.Nome.Length < 2)
+                return BadRequest("Nome deve ter no mínimo 2 caracteres");
+
+            if (paciente.Nome.Length > 100)
+                return BadRequest("Nome deve ter no máximo 100 caracteres");
+
             _repository.Add(paciente);
 
             return Ok(paciente);
         }
 
-        // ❌ DELETAR PACIENTE
+        // DELETAR PACIENTE
         [HttpDelete("{id}")]
         public IActionResult Delete(int id)
         {
@@ -54,6 +67,14 @@ namespace AgendaConsultas.Controllers
 
             if (paciente == null)
                 return NotFound("Paciente não encontrado");
+
+            // não excluir paciente com consultas
+            var possuiConsultas = _consultaRepository
+                .GetByPacienteId(id)
+                .Any();
+
+            if (possuiConsultas)
+                return BadRequest("Não é possível excluir paciente com consultas cadastradas");
 
             _repository.Delete(id);
 

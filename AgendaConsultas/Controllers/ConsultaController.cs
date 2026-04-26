@@ -43,16 +43,16 @@ namespace AgendaConsultas.Controllers
         [HttpPost]
         public IActionResult Post(Consulta consulta)
         {
-            //  REGRA 1 — NÃO NO PASSADO
+            //  NÃO AGENDAR NO PASSADO
             if (consulta.Data < DateTime.Now)
                 return BadRequest("Não pode agendar no passado");
 
-            //  REGRA 2 — PACIENTE EXISTE
+            //  validar se  PACIENTE EXISTE
             var paciente = _pacienteRepository.GetById(consulta.PacienteId);
             if (paciente == null)
                 return BadRequest("Paciente não encontrado");
 
-            //  REGRA 3 — CONFLITO DE HORÁRIO
+            //  CONFLITO DE HORÁRIO
             var conflito = _consultaRepository
                 .GetByPacienteId(consulta.PacienteId)
                 .Any(c => c.Data == consulta.Data);
@@ -60,7 +60,7 @@ namespace AgendaConsultas.Controllers
             if (conflito)
                 return BadRequest("Conflito de horário");
 
-            //  REGRA 4 — STATUS AUTOMÁTICO
+            //  STATUS AUTOMÁTICO QUANDO CRIAR
             consulta.Status = StatusConsulta.Agendada;
 
             _consultaRepository.Add(consulta);
@@ -77,15 +77,15 @@ namespace AgendaConsultas.Controllers
             if (consulta == null)
                 return NotFound("Consulta não encontrada");
 
-            // 🔢 REGRA 5 — NÃO ALTERAR CONCLUÍDA
+            //  NÃO ALTERAR CONCLUÍDA
             if (consulta.Status == StatusConsulta.Concluida)
                 return BadRequest("Não pode alterar consulta concluída");
 
-            // 🔢 REGRA 1 (REAPLICADA)
+            // validar nova data
             if (novaConsulta.Data < DateTime.Now)
                 return BadRequest("Data inválida");
 
-            //  REGRA 3 (REAPLICADA)
+        //  VALIDACAO DE CONFLITO DE HORÁRIO
             var conflito = _consultaRepository
                 .GetByPacienteId(consulta.PacienteId)
                 .Any(c => c.Data == novaConsulta.Data && c.Id != id);
@@ -102,14 +102,14 @@ namespace AgendaConsultas.Controllers
 
         //  ATUALIZAR STATUS
         [HttpPut("{id}/status")]
-        public IActionResult AtualizarStatus(int id, StatusConsulta status)
+        public IActionResult AtualizarStatus(int id, [FromBody] StatusConsulta status)
         {
             var consulta = _consultaRepository.GetById(id);
 
             if (consulta == null)
                 return NotFound("Consulta não encontrada");
 
-            // 🔢 REGRA 6 — NÃO ALTERAR CONCLUÍDA
+            // NÃO ALTERAR CONSULTA CONCLUÍDA
             if (consulta.Status == StatusConsulta.Concluida)
                 return BadRequest("Consulta já concluída não pode ser alterada");
 

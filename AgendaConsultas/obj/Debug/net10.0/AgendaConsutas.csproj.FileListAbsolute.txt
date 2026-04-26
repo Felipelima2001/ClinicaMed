@@ -146,3 +146,4 @@ C:\Users\PC\Documents\GitHub\ClinicaMed\AgendaConsultas\obj\Debug\net10.0\refint
 C:\Users\PC\Documents\GitHub\ClinicaMed\AgendaConsultas\obj\Debug\net10.0\AgendaConsutas.pdb
 C:\Users\PC\Documents\GitHub\ClinicaMed\AgendaConsultas\obj\Debug\net10.0\AgendaConsutas.genruntimeconfig.cache
 C:\Users\PC\Documents\GitHub\ClinicaMed\AgendaConsultas\obj\Debug\net10.0\ref\AgendaConsutas.dll
+C:\Users\PC\Documents\GitHub\ClinicaMed\AgendaConsultas\obj\Debug\net10.0\AgendaConsutas.sourcelink.json
