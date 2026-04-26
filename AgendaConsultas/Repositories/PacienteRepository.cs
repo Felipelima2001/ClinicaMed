@@ -38,5 +38,11 @@ namespace AgendaConsultas.Repositories
             _context.Pacientes.Remove(paciente);
             _context.SaveChanges();
         }
+
+        public void Update(Paciente paciente)
+        {
+            _context.Pacientes.Update(paciente);
+            _context.SaveChanges();
+        }
     }
 }

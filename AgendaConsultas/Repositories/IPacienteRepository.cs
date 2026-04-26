@@ -9,5 +9,6 @@ namespace AgendaConsultas.Repositories
 
         void Add(Paciente paciente);
         void Delete(int id);
+        void Update(Paciente paciente);
     }
 }

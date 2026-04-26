@@ -68,6 +68,9 @@ namespace AgendaConsultas.Controllers
             return Ok("Consulta agendada");
         }
 
+        
+        
+
         //  ATUALIZAR CONSULTA
         [HttpPut("{id}")]
         public IActionResult Put(int id, Consulta novaConsulta)

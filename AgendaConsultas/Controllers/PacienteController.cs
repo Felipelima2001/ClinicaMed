@@ -28,7 +28,21 @@ namespace AgendaConsultas.Controllers
             //  retornar lista vazia se não tiver
             return Ok(pacientes ?? new List<Paciente>());
         }
-
+        
+        [HttpPut("{id}")]
+            public IActionResult Put(int id, Paciente paciente)
+            {
+                var existente = _repository.GetById(id);
+    
+                if (existente == null)
+                    return NotFound("Paciente não encontrado");
+    
+                existente.Nome = paciente.Nome;
+    
+                _repository.Update(existente);
+    
+                return Ok(existente);
+            }
         // BUSCAR POR ID
         [HttpGet("{id}")]
         public IActionResult GetById(int id)
